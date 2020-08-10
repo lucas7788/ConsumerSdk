@@ -29,7 +29,7 @@ func (this *ConsumerSdk) QueryIssuerList() (issuerList []string, err error) {
 	if err != nil {
 		return
 	}
-	err = json.Unmarshal(res, issuerList)
+	err = json.Unmarshal(res, &issuerList)
 	if err != nil {
 		return
 	}
@@ -45,13 +45,29 @@ func (this *ConsumerSdk) QueryTemplateByIssuerId(issuerId string) (template map[
 	if err != nil {
 		return
 	}
-	err = json.Unmarshal(res, template)
+	err = json.Unmarshal(res, &template)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func (this *ConsumerSdk) VerifyCredential() {
-	this.ontSdk.Credential.VerifyCredibleOntId()
+func (this *ConsumerSdk) VerifyCredential(credential *ontology_go_sdk.VerifiableCredential) (err error) {
+	err = this.ontSdk.Credential.VerifyExpirationDate(credential)
+	if err != nil {
+		return
+	}
+	err = this.ontSdk.Credential.VerifyIssuanceDate(credential)
+	if err != nil {
+		return
+	}
+	err = this.ontSdk.Credential.VerifyIssuerSignature(credential)
+	if err != nil {
+		return
+	}
+	err = this.ontSdk.Credential.VerifyStatus(credential)
+	if err != nil {
+		return
+	}
+	return
 }
