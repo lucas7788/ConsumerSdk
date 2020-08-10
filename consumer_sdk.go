@@ -1,0 +1,57 @@
+package ConsumerSdk
+
+import (
+	"encoding/json"
+	"github.com/kataras/go-errors"
+	"github.com/ontio/ConsumerSdk/config"
+	"github.com/ontio/ConsumerSdk/forward"
+	"github.com/ontio/ontology-go-sdk"
+)
+
+type ConsumerSdk struct {
+	addr   string
+	ontSdk *ontology_go_sdk.OntologySdk
+}
+
+func NewConsumerSdk(addr string, ontSdk *ontology_go_sdk.OntologySdk) *ConsumerSdk {
+	return &ConsumerSdk{
+		addr:   addr,
+		ontSdk: ontSdk,
+	}
+}
+
+func (this *ConsumerSdk) QueryIssuerList() (issuerList []string, err error) {
+	if this.addr == "" {
+		err = errors.New("addr is not set")
+		return
+	}
+	res, err := forward.Get(this.addr + config.QueryIssuerList)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(res, issuerList)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (this *ConsumerSdk) QueryTemplateByIssuerId(issuerId string) (template map[string]interface{}, err error) {
+	if this.addr == "" {
+		err = errors.New("addr is not set")
+		return
+	}
+	res, err := forward.Get(this.addr + config.QueryIssuerTemplateByIssuerId)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(res, template)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (this *ConsumerSdk) VerifyCredential() {
+	this.ontSdk.Credential.VerifyCredibleOntId()
+}
