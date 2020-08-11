@@ -3,5 +3,5 @@ package config
 const (
 	QueryIssuerList = ""
 	QueryIssuerTemplateByIssuerId = ""
-	RequestAuthentication = ""
+	RequestAuthentication = "/v1/kyc-data"
 )
