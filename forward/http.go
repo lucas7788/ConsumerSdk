@@ -70,8 +70,16 @@ func PostJSONRequestWithRetry(uri string, data []byte, headers map[string]string
 }
 
 // PostJSONRequest for post json request
-func PostJSONRequest(uri string, data []byte, headers map[string]string) (int, string, []byte, error) {
-	return JSONRequest("POST", uri, data, headers)
+func PostJSONRequest(uri string, data []byte, headers map[string]string) (res []byte, err error) {
+	code, _, res, err := JSONRequest("POST", uri, data, headers)
+	if err != nil {
+		return
+	}
+	if code != http.StatusOK {
+		err = fmt.Errorf("status:%d is not 200", code)
+		return
+	}
+	return
 }
 
 func Get(url string) (respBody []byte, err error) {
